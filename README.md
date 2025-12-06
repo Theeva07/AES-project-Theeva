@@ -37,4 +37,71 @@ When a reminder triggers, the system sends a **mock push notification** to demon
 ## System Architecture
 
 ### **FreeRTOS Task Diagram**
++---------------------+
+| button_task |
+| Reads button input |
+| Debounces + short/ |
+| long press logic |
++----------+----------+
+|
+v (queue)
++----------+----------+
+| control_task |
+| Updates reminder |
+| Starts/stops timer |
+| Controls OLED |
++----------+----------+
+|
+v
++----------+----------+
+| esp_timer |
+| One-shot callback |
+| -> Sets alert flag |
++----------+----------+
+|
+v
++----------+----------+
+| alert_task |
+| LED + buzzer alert |
++---------------------+
 
+## Repository Structure
+/main
+├── main.c # Main application logic
+├── CMakeLists.txt # Build config for ESP-IDF
+/build # Auto-generated
+/sdkconfig # ESP-IDF project config
+/README.md # Documentation
+
+## 🔧 Hardware Requirements
+- **Seeed Studio XIAO ESP32-C3**
+- **1× Push Button**
+- **1× LED**
+- **1× Buzzer**
+- (Optional) OLED display: **SSD1306 I2C**
+
+### Wiring Summary:
+| Component | ESP32-C3 Pin |
+|----------|--------------|
+| LED      | D2 (GPIO4)   |
+| Buzzer   | D3 (GPIO5)   |
+| Button   | D8 (GPIO18 → GND) |
+| OLED (optional) | SDA=D4, SCL=D5 |
+
+## Installation & Flashing
+1. Install **ESP-IDF 5.x**
+2. Configure using:
+idf.py set-target esp32c3
+idf.py menuconfig
+3. Build & flash:
+idf.py build flash monitor
+
+## Simulated Cloud Logs
+Example output when reminder triggers:
+[CLOUD] Reminder alert fired (30000 ms)
+
+## License
+This project is developed for academic purposes under UTP AES course.
+
+## Video Demo
+A working demo of system behavior is included as part of the project submission.
